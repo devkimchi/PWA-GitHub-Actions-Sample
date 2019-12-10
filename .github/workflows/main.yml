@@ -11,13 +11,27 @@ jobs:
     - name: Checkout the repo
       uses: actions/checkout@v1
 
+#    - name: Login to Azure
+#      uses: Azure/login@v1
+#      env:
+#        CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+#      with:
+#        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
+#        creds: $CREDENTIALS
+
     - name: Login to Azure
-      uses: Azure/login@v1
+      uses: Azure/cli@v1.0.0
       env:
-        CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
+        TENANT_ID: ${{ secrets.TENANT_ID }}
       with:
-        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-        creds: $CREDENTIALS
+        # Azure CLI version to be used to execute the script. If not provided, latest version is used
+        azcliversion: latest
+        # Specify the script here
+        inlineScript: |
+          az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID
 
     - name: Install npm packages
       shell: bash
