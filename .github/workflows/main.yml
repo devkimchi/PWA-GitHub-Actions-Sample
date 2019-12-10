@@ -14,7 +14,7 @@ jobs:
     - name: Login to Azure
       uses: Azure/login@v1
       env:
-        credentials: {{ secrets.AZURE_CREDENTIALS }}
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
       with:
         # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
         creds: $credentials
@@ -34,7 +34,7 @@ jobs:
     - name: Publish app
       uses: Azure/cli@v1.0.0
       env:
-        storageAccountName: {{ secrets.STORAGE_ACCOUNT_NAME }}
+        storageAccountName: ${{ secrets.STORAGE_ACCOUNT_NAME }}
       with:
         # Azure CLI version to be used to execute the script. If not provided, latest version is used
         azcliversion: latest
