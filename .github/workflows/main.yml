@@ -33,12 +33,6 @@ jobs:
 #        inlineScript: |
 #          az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID
 
-    - name: Echo
-      shell: bash
-      env:
-        TENANT_ID: ${{ secrets.TENANT_ID }}
-      run: echo $TENANT_ID
-
     - name: Login to Azure
       shell: bash
       env:
@@ -48,21 +42,23 @@ jobs:
         TENANT_ID: ${{ secrets.TENANT_ID }}
       run: az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID
 
-    - name: Change directory
-      shell: bash
-      run: cd $GITHUB_WORKSPACE/src/WebApp
-
     - name: Install npm packages
       shell: bash
-      run: npm install
+      run: |
+        cd $GITHUB_WORKSPACE/src/WebApp
+        npm install
 
     - name: Build app
       shell: bash
-      run: npm run build
+      run: |
+        cd $GITHUB_WORKSPACE/src/WebApp
+        npm run build
 
     - name: Test app
       shell: bash
-      run: npm run test:unit
+      run: |
+        cd $GITHUB_WORKSPACE/src/WebApp
+        npm run test:unit
 
     - name: Publish app
       uses: Azure/cli@v1.0.0
@@ -73,4 +69,4 @@ jobs:
         azcliversion: latest
         # Specify the script here
         inlineScript: |
-          az storage blob upload-batch -s ./dist -d \$web --account-name $STORAGE_ACCOUNT_NAME
+          az storage blob upload-batch -s $GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name $STORAGE_ACCOUNT_NAME
