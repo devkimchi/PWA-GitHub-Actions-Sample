@@ -14,10 +14,10 @@ jobs:
     - name: Login to Azure
       uses: Azure/login@v1
       env:
-        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+        CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
       with:
         # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
-        creds: $credentials
+        creds: $CREDENTIALS
 
     - name: Install npm packages
       shell: bash
@@ -34,10 +34,10 @@ jobs:
     - name: Publish app
       uses: Azure/cli@v1.0.0
       env:
-        storageAccountName: ${{ secrets.STORAGE_ACCOUNT_NAME }}
+        STORAGE_ACCOUNT_NAME: ${{ secrets.STORAGE_ACCOUNT_NAME }}
       with:
         # Azure CLI version to be used to execute the script. If not provided, latest version is used
         azcliversion: latest
         # Specify the script here
         inlineScript: |
-          az storage blob upload-batch -s GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name $storageAccountName
+          az storage blob upload-batch -s GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name $STORAGE_ACCOUNT_NAME
