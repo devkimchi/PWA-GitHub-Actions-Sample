@@ -1,10 +1,9 @@
-name: CI
+name: Publish Static Web App to Azure Blob Storage
 
-on: [push]
+on: push
 
 jobs:
-  build:
-
+  build_and_publish:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,55 +13,26 @@ jobs:
     - name: Login to Azure
       uses: Azure/login@v1
       with:
-        # Paste output of `az ad sp create-for-rbac` as value of secret variable: AZURE_CREDENTIALS
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    #  - name: Login to Azure
-    #    uses: Azure/cli@v1.0.0
-    #    env:
-    #      CLIENT_ID: ${{ secrets.CLIENT_ID }}
-    #      CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-    #      SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-    #      TENANT_ID: ${{ secrets.TENANT_ID }}
-    #    with:
-    #      # Azure CLI version to be used to execute the script. If not provided, latest version is used
-    #      azcliversion: latest
-    #      # Specify the script here
-    #      inlineScript: |
-    #        az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID
-
-    # - name: Login to Azure
-    #   shell: bash
-    #   env:
-    #     CLIENT_ID: ${{ secrets.CLIENT_ID }}
-    #     CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-    #     SUBSCRIPTION_ID: ${{ secrets.SUBSCRIPTION_ID }}
-    #     TENANT_ID: ${{ secrets.TENANT_ID }}
-    #   run: az login --service-principal -u $CLIENT_ID -p $CLIENT_SECRET -t $TENANT_ID
 
     - name: Install npm packages
       shell: bash
       run: |
         cd $GITHUB_WORKSPACE/src/WebApp
         npm install
-
     - name: Build app
       shell: bash
       run: |
         cd $GITHUB_WORKSPACE/src/WebApp
         npm run build
-
     - name: Test app
       shell: bash
       run: |
         cd $GITHUB_WORKSPACE/src/WebApp
         npm run test:unit
-
     - name: Publish app
       uses: Azure/cli@v1.0.0
       with:
-        # Azure CLI version to be used to execute the script. If not provided, latest version is used
         azcliversion: latest
-        # Specify the script here
         inlineScript: |
           az storage blob upload-batch -s $GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }}
