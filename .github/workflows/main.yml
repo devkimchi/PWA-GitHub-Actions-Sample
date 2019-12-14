@@ -33,6 +33,11 @@ jobs:
         cd $GITHUB_WORKSPACE/src/WebApp
         npm run test:unit
 
+    - name: Create directory for artifacts
+      shell: bash
+      run: |
+        mkdir -p artifacts
+
     - name: Upload app
       uses: actions/upload-artifact@v1
       with:
