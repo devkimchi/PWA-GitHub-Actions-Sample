@@ -42,7 +42,7 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: app
-        path: $GITHUB_WORKSPACE/src/WebApp/dist
+        path: src/WebApp/dist
 
     # - name: Publish app
     #   uses: Azure/cli@v1.0.0
