@@ -10,11 +10,6 @@ jobs:
     - name: Checkout the repo
       uses: actions/checkout@v1
 
-    - name: Login to Azure
-      uses: Azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - name: Install npm packages
       shell: bash
       run: |
@@ -50,6 +45,11 @@ jobs:
         name: app
         path: src/WebApp/dist
 
+    - name: Login to Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
     - name: Publish app
       uses: Azure/cli@v1.0.0
       with:
@@ -67,6 +67,11 @@ jobs:
       with:
         name: app
         path: src/WebApp/dist
+
+    - name: Login to Azure
+      uses: Azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
     - name: Publish app
       uses: Azure/cli@v1.0.0
