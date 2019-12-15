@@ -33,20 +33,44 @@ jobs:
         cd $GITHUB_WORKSPACE/src/WebApp
         npm run test:unit
 
-    # - name: Create directory for artifacts
-    #   shell: bash
-    #   run: |
-    #     mkdir -p artifacts
-
     - name: Upload app
       uses: actions/upload-artifact@v1
       with:
         name: app
         path: src/WebApp/dist
 
-    # - name: Publish app
-    #   uses: Azure/cli@v1.0.0
-    #   with:
-    #     azcliversion: latest
-    #     inlineScript: |
-    #       az storage blob upload-batch -s $GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }}
+  deploy_to_dev:
+    needs: build_and_publish
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download app
+      uses: actions/download-artifact@v1
+      with:
+        name: app
+        path: src/WebApp/dist
+
+    - name: Publish app
+      uses: Azure/cli@v1.0.0
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az storage blob upload-batch -s $GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name ${{ secrets.STORAGE_ACCOUNT_NAME }}
+
+  deploy_to_prod:
+    needs: deploy_to_dev
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Download app
+      uses: actions/download-artifact@v1
+      with:
+        name: app
+        path: src/WebApp/dist
+
+    - name: Publish app
+      uses: Azure/cli@v1.0.0
+      with:
+        azcliversion: latest
+        inlineScript: |
+          az storage blob upload-batch -s $GITHUB_WORKSPACE/src/WebApp/dist -d \$web --account-name ${{ secrets.STORAGE_ACCOUNT_NAME_2 }}
